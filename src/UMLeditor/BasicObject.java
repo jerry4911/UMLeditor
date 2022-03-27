@@ -23,7 +23,7 @@ public abstract class BasicObject extends Shape {
 		int[] ypoint = {y1-offset/2, (y1+y2)/2-offset/2, y2-offset/2, (y1+y2)/2-offset/2};
 		
 		for(int i = 0; i < ports.length; i++) {
-			Port port = new Port(xpoint[i]-width/2, ypoint[i]-height/2);
+			Port port = new Port(xpoint[i], ypoint[i]);
 			ports[i] = port;
 		}
 	}

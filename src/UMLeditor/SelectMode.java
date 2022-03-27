@@ -4,18 +4,29 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SelectMode extends Mode {
 	private Point start_P, end_P = null;
 	private Point g_start_P = null;
 	private int offset_x, offset_y;
-	private BasicObject selectedObj = null;
+	private Shape selectedObj = null;
 	
 	public void mousePressed(MouseEvent e) {
-		selectedObj = (BasicObject)canvas.findObj(e.getPoint().x, e.getPoint().y);
+		selectedObj = canvas.findShape(e.getPoint().x, e.getPoint().y);
+		System.out.println(selectedObj);
 		start_P = new Point(e.getPoint().x, e.getPoint().y);
 		canvas.resetPort();
 		if( selectedObj!=null ) {
+			if(selectedObj.depth<99) {
+//				selectedObj.depth+=1;
+				selectedObj.depth = canvas.maxDepth;
+			}
+			if (selectedObj.getClass()==Group.class) {
+				Group group = (Group)selectedObj;
+				group.selected = true;
+			}
 			canvas.tempObj = selectedObj;
 			canvas.area = null;
 			selectedObj.selected = true;
@@ -23,6 +34,9 @@ public class SelectMode extends Mode {
 		else {
 			canvas.tempObj = null;
 			g_start_P = new Point(start_P.x, start_P.y);
+			for (int i=0; i<canvas.shapes.size(); i++) {
+				canvas.shapes.get(i).selected = false;
+			}			
 		}
 		canvas.repaint();
 	}
@@ -35,25 +49,45 @@ public class SelectMode extends Mode {
 		start_P.y = e.getPoint().y;
 		canvas.resetPort();
 		if (selectedObj != null) {
-			selectedObj.x1+=offset_x;
-			selectedObj.y1+=offset_y;
-			selectedObj.x2+=offset_x;
-			selectedObj.y2+=offset_y;
-			selectedObj.addOffset(offset_x, offset_y);
-			for(int i=0; i<selectedObj.ports.length; i++) {
-				canvas.addPort(selectedObj.ports[i]);
+			List<Shape> inside_shapes = new ArrayList<Shape>();
+			if (selectedObj.getClass()==Group.class) {
+				Group group = (Group)selectedObj;
+				inside_shapes = group.shapes;
+				group.x1+=offset_x;
+				group.y1+=offset_y;
+				group.x2+=offset_x;
+				group.y2+=offset_y;
+				group.createPorts();
+				group.selected = true;
 			}
-			for(int i=0; i<canvas.lines.size(); i++) {
-				Line line = canvas.lines.get(i);
-				if (line.startObj==selectedObj) {
-					line.x1+=offset_x;
-					line.y1+=offset_y;
-				}
-				if (line.endObj==selectedObj) {
-					line.x2+=offset_x;
-					line.y2+=offset_y;
-				}
+			else {
+				inside_shapes.add(selectedObj);
 			}
+			System.out.println(inside_shapes.size());
+			for(int i=0; i<inside_shapes.size(); i++) {
+				Shape insideObj = inside_shapes.get(i);
+//				insideObj.x1+=offset_x;
+//				insideObj.y1+=offset_y;
+//				insideObj.x2+=offset_x;
+//				insideObj.y2+=offset_y;
+				insideObj.addXYOffset(offset_x, offset_y);
+//				insideObj.addPortOffset(offset_x, offset_y);
+				
+				for(int j=0; j<insideObj.ports.length; j++) {
+					canvas.addPort(insideObj.ports[j]);
+				}
+				for(int j=0; j<canvas.lines.size(); j++) {
+					Line line = canvas.lines.get(j);
+					if (line.startObj==insideObj) {
+						line.x1+=offset_x;
+						line.y1+=offset_y;
+					}
+					if (line.endObj==insideObj) {
+						line.x2+=offset_x;
+						line.y2+=offset_y;
+					}
+				}
+			}		
 		}
 		else {
 			if (canvas.area==null)
@@ -75,14 +109,24 @@ public class SelectMode extends Mode {
 		if (selectedObj == null) {
 			for(int i=0; i<canvas.shapes.size(); i++) {
 				Shape shape = canvas.shapes.get(i);
-				if ( shape.x1-shape.width/2>g_start_P.x && shape.x2-shape.width/2<end_P.x && 
-						shape.y1-shape.height/2>g_start_P.y && shape.y2-shape.height/2<end_P.y ) {
+				if ( shape.x1>g_start_P.x && shape.x2<end_P.x && 
+						shape.y1>g_start_P.y && shape.y2<end_P.y ) {
 					shape.selected = true;
+					if(shape.depth<99) {
+//						shape.depth+=1;
+						shape.depth = canvas.maxDepth;
+					}	
 				}
 				else {
 					shape.selected = false;
 				}
 			}
+		}
+		else {
+//			if (selectedObj.getClass()==Group.class) {
+//				Group group = (Group)selectedObj;
+//				group.selected = false;
+//			}
 		}
 	}
 }

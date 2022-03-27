@@ -15,9 +15,11 @@ public class CreateObjectMode extends Mode {
 		BasicObject basicObj = null;
 		if (objType.equals("usecase")) {
 			basicObj = new UsecaseObject(e.getPoint().x, e.getPoint().y);
+			basicObj.depth = canvas.minDepth;
 		}
 		else if (objType.equals("class")) {
 			basicObj = new ClassObject(e.getPoint().x, e.getPoint().y);
+			basicObj.depth = canvas.minDepth;
 		}
 		canvas.addShape(basicObj);
 		canvas.repaint();

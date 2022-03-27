@@ -20,12 +20,15 @@ public class ClassObject extends BasicObject{
 	@Override
 	public void paint(Graphics g) {
 		g.setColor(Color.WHITE);
-		g.fillRect(x1-width/2, y1-height/2, width, height);
+		g.fillRect(x1, y1, width, height);
 		g.setColor(Color.BLACK);
-		g.drawRect(x1-width/2, y1-height/2, width, height);
+		g.drawRect(x1, y1, width, height);
 		int gap = height / 3;
-		g.drawLine(x1-width/2, y1-height/2 + gap, x2-width/2, y1-height/2 + gap);
-		g.drawLine(x1-width/2, y1-height/2 + gap * 2, x2-width/2, y1-height/2 + gap * 2);
+		g.drawLine(x1, y1 + gap, x2, y1 + gap);
+		g.drawLine(x1, y1 + gap * 2, x2, y1 + gap * 2);
+		if (selected) {
+			paintPort(g);
+		}
 	}
 
 	@Override

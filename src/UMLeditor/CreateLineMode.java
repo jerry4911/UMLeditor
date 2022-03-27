@@ -18,10 +18,13 @@ public class CreateLineMode extends Mode {
 		Point nearest_p = null;
 		startObj = null;
 		for(int i=0; i<canvas.shapes.size(); i++) {
+			if (canvas.shapes.get(i).getClass()==Group.class) {
+				continue;
+			}
 			startObj = (BasicObject) canvas.shapes.get(i);
 			// 點擊在圖形裡面
-			if ( start_P.x>startObj.x1-startObj.width/2 && start_P.x<startObj.x2-startObj.width/2 && 
-					start_P.y>startObj.y1-startObj.height/2 && start_P.y<startObj.y2-startObj.height/2 ) {
+			if ( start_P.x>startObj.x1 && start_P.x<startObj.x2 && 
+					start_P.y>startObj.y1 && start_P.y<startObj.y2 ) {
 				// 找到最近的連接點
 				nearest_p = new Point(startObj.ports[0].x, startObj.ports[0].y);
 				double distance = Math.pow(startObj.ports[0].x-start_P.x,2)+Math.pow(startObj.ports[0].y-start_P.y,2);
@@ -67,9 +70,14 @@ public class CreateLineMode extends Mode {
 			Point nearest_p = null;
 			endObj = null;
 			for(int i=0; i<canvas.shapes.size(); i++) {
+				if (canvas.shapes.get(i).getClass()==Group.class) {
+					continue;
+				}
 				endObj = (BasicObject) canvas.shapes.get(i);
-				if ( end_P.x>endObj.x1-endObj.width/2 && end_P.x<endObj.x2-endObj.width/2 && 
-						end_P.y>endObj.y1-endObj.height/2 && end_P.y<endObj.y2-endObj.height/2 ) {
+				if (endObj == startObj)
+					continue;
+				if ( end_P.x>endObj.x1&& end_P.x<endObj.x2 && 
+						end_P.y>endObj.y1 && end_P.y<endObj.y2 ) {
 					// 找到最近的連接點
 					nearest_p = new Point(endObj.ports[0].x, endObj.ports[0].y);
 					double distance = Math.pow(endObj.ports[0].x-end_P.x,2)+Math.pow(endObj.ports[0].y-end_P.y,2);

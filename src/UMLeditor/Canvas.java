@@ -11,17 +11,22 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EventListener;
 import java.util.List;
 
 public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
+	int minDepth = 0;
+	int maxDepth = 0;
 	private static Canvas instance = null; //For singleton
 	List<Shape> shapes = new ArrayList<Shape>();
 	List<Line> lines = new ArrayList<Line>();
 	private List<Port> ports = new ArrayList<Port>();
 	Line tempLine = null;
-	BasicObject tempObj = null;
+	Shape tempObj = null;
 	SelectArea area = null;
+	List<Shape> tempGroup = new ArrayList<Shape>();
 	private EventListener listener = null;
 	protected Mode currentMode = null;
 	
@@ -60,18 +65,49 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setStroke(new BasicStroke(1));
 		
+		Collections.sort(shapes, new Comparator<Shape>(){
+		     public int compare(Shape s1, Shape s2){
+		         if(s1.depth == s2.depth)
+		             return 0;
+		         return s1.depth < s2.depth ? -1 : 1;
+		     }
+		});
+		int min = 99;
+		int max = 0;
 		for (int i=0; i<shapes.size(); i++) {
 			Shape shape = shapes.get(i);
+			if (shape.depth<min)
+				min = shape.depth;
+			if (shape.depth>max)
+				max = shape.depth;
 			shape.paint(g);
-			if (shape.name!="") {
-				g.drawString(shape.name, shape.x1-shape.name.length()*3, shape.y1);
-			}
 			if (shape.selected) {
-				for(int j=0; j<shape.ports.length; j++) {
-					shape.ports[j].paint(g);
-				}
+//				if (shape.getClass()==Group.class) {
+//					Group group = (Group)shape;
+//					for(int j=0; j<group.shapes.size(); j++) {
+//						Shape s = group.shapes.get(j);
+//						if (s.ports==null)
+//							continue;
+//						for(int k=0; k<s.ports.length; k++) {
+//							s.ports[k].paint(g);
+//						}
+//					}
+//				}
+//				else {
+//					if (shape.ports==null)
+//						continue;
+//					for(int j=0; j<shape.ports.length; j++) {
+//						shape.ports[j].paint(g);
+//					}
+//				}	
+				shape.paintPort(g);
+			}
+			if (shape.name!="") {
+				g.drawString(shape.name, shape.x1-shape.name.length()*3+shape.width/2, shape.y1+shape.height/2);
 			}
 		}
+		minDepth = min;
+		maxDepth = max;
 		
 		if(area!=null)
 			area.paint(g);
@@ -110,10 +146,17 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 		}
 	}
 	
-	public Shape findObj(int x, int y) {
+	public Shape findShape(int x, int y) {
+		Collections.sort(shapes, new Comparator<Shape>(){
+		     public int compare(Shape s1, Shape s2){
+		         if(s1.depth == s2.depth)
+		             return 0;
+		         return s1.depth > s2.depth ? -1 : 1;
+		     }
+		});
 		for (int i=0; i<shapes.size(); i++) {
-			if (x>shapes.get(i).x1-shapes.get(i).width/2 && x<shapes.get(i).x2-shapes.get(i).width/2 &&
-					y>shapes.get(i).y1-shapes.get(i).height/2 && y<shapes.get(i).y2-shapes.get(i).height/2) {
+			if (x>shapes.get(i).x1 && x<shapes.get(i).x2 &&
+					y>shapes.get(i).y1 && y<shapes.get(i).y2) {
 				return shapes.get(i);
 			}
 		}
@@ -125,9 +168,14 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 	}
 
 	public void changeObjName(String text) {
-		if (tempObj!=null) {
+		if (tempObj!=null&& tempObj.getClass()!=Group.class) {
 			tempObj.name = text;
 		}	
+	}
+	public void sortShapes(List<Shape> shapes) {
+		for(int i=0; i<shapes.size(); i++) {
+			
+		}
 	}
 
 }

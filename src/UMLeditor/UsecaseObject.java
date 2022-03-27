@@ -20,14 +20,18 @@ public class UsecaseObject extends BasicObject{
 	@Override
 	public void paint(Graphics g) {
 		g.setColor(Color.WHITE);
-		g.fillOval(x1-width/2, y1-height/2, width, height);
+		g.fillOval(x1, y1, width, height);
 		g.setColor(Color.BLACK);
-		g.drawOval(x1-width/2, y1-height/2, width, height);
+		g.drawOval(x1, y1, width, height);
+		if (selected) {
+			paintPort(g);
+		}
 	}
 
 	@Override
 	public void paintPort(Graphics g) {
-		// TODO Auto-generated method stub
-		
+		for(int i = 0; i < this.ports.length; i++) {
+			this.ports[i].paint(g);
+		}	
 	}
 }

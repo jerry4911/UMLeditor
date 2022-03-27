@@ -22,7 +22,7 @@ public class UMLeditor extends JFrame{
 		UMLeditor mainWindow = new UMLeditor();
 		mainWindow.setTitle("§Ö¼Öªº UML editor");
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mainWindow.setSize(1000, 600);
+		mainWindow.setSize(800, 600);
 		mainWindow.setLocationRelativeTo(null);
 		mainWindow.setVisible(true);
 	}
