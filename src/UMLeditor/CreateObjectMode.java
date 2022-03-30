@@ -21,6 +21,8 @@ public class CreateObjectMode extends Mode {
 			basicObj = new ClassObject(e.getPoint().x, e.getPoint().y);
 			basicObj.depth = canvas.minDepth;
 		}
+		System.out.println(basicObj.depth);
+		canvas.minDepth++;
 		canvas.addShape(basicObj);
 		canvas.repaint();
 	}

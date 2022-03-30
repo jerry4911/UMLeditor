@@ -72,14 +72,14 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 		         return s1.depth < s2.depth ? -1 : 1;
 		     }
 		});
-		int min = 99;
-		int max = 0;
+//		int min = 99;
+//		int max = 0;
 		for (int i=0; i<shapes.size(); i++) {
 			Shape shape = shapes.get(i);
-			if (shape.depth<min)
-				min = shape.depth;
-			if (shape.depth>max)
-				max = shape.depth;
+//			if (shape.depth<min)
+//				min = shape.depth;
+//			if (shape.depth>max)
+//				max = shape.depth;
 			shape.paint(g);
 			if (shape.selected) {
 //				if (shape.getClass()==Group.class) {
@@ -106,8 +106,8 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 				g.drawString(shape.name, shape.x1-shape.name.length()*3+shape.width/2, shape.y1+shape.height/2);
 			}
 		}
-		minDepth = min;
-		maxDepth = max;
+//		minDepth = min;
+//		maxDepth = max;
 		
 		if(area!=null)
 			area.paint(g);
@@ -149,18 +149,22 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 	public Shape findShape(int x, int y) {
 		Collections.sort(shapes, new Comparator<Shape>(){
 		     public int compare(Shape s1, Shape s2){
-		         if(s1.depth == s2.depth)
-		             return 0;
-		         return s1.depth > s2.depth ? -1 : 1;
+		    	 if(s1.depth < s2.depth)
+		    		 return -1;
+		    	 else if(s1.depth > s2.depth)
+		    		 return 1;
+		    	 else return 0;
 		     }
 		});
+		Shape selectedShape = null;
 		for (int i=0; i<shapes.size(); i++) {
+			System.out.println(shapes.get(i));
 			if (x>shapes.get(i).x1 && x<shapes.get(i).x2 &&
 					y>shapes.get(i).y1 && y<shapes.get(i).y2) {
-				return shapes.get(i);
+				selectedShape = shapes.get(i);
 			}
 		}
-		return null;
+		return selectedShape;
 	}
 
 	public void addPort(Port port) {
@@ -172,10 +176,10 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 			tempObj.name = text;
 		}	
 	}
-	public void sortShapes(List<Shape> shapes) {
-		for(int i=0; i<shapes.size(); i++) {
-			
-		}
-	}
+//	public void sortShapes(List<Shape> shapes) {
+//		for(int i=0; i<shapes.size(); i++) {
+//			
+//		}
+//	}
 
 }

@@ -15,14 +15,11 @@ public class SelectMode extends Mode {
 	
 	public void mousePressed(MouseEvent e) {
 		selectedObj = canvas.findShape(e.getPoint().x, e.getPoint().y);
+		System.out.print("Choose¡G");
 		System.out.println(selectedObj);
 		start_P = new Point(e.getPoint().x, e.getPoint().y);
 		canvas.resetPort();
 		if( selectedObj!=null ) {
-			if(selectedObj.depth<99) {
-//				selectedObj.depth+=1;
-				selectedObj.depth = canvas.maxDepth;
-			}
 			if (selectedObj.getClass()==Group.class) {
 				Group group = (Group)selectedObj;
 				group.selected = true;
@@ -63,7 +60,7 @@ public class SelectMode extends Mode {
 			else {
 				inside_shapes.add(selectedObj);
 			}
-			System.out.println(inside_shapes.size());
+//			System.out.println(inside_shapes.size());
 			for(int i=0; i<inside_shapes.size(); i++) {
 				Shape insideObj = inside_shapes.get(i);
 //				insideObj.x1+=offset_x;
@@ -112,10 +109,6 @@ public class SelectMode extends Mode {
 				if ( shape.x1>g_start_P.x && shape.x2<end_P.x && 
 						shape.y1>g_start_P.y && shape.y2<end_P.y ) {
 					shape.selected = true;
-					if(shape.depth<99) {
-//						shape.depth+=1;
-						shape.depth = canvas.maxDepth;
-					}	
 				}
 				else {
 					shape.selected = false;
