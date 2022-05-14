@@ -9,18 +9,21 @@ import java.awt.geom.AffineTransform;
 
 public class AssociationLine extends Line {
 	private int arrowW = 20, arrowH = 10;
-	public AssociationLine(int x1, int y1, int x2, int y2) {		
-		this.x1 = x1;
-		this.y1 = y1;
-		this.x2 = x2;
-		this.y2 = y2;
+	
+	public AssociationLine(Port start, Port end) {		
+		super(start, end);
 	}
 
 	@Override
 	public void paint(Graphics g) {
+		int x1 = ports[0].x;
+		int y1 = ports[0].y;
+		int x2 = ports[1].x;
+		int y2 = ports[1].y;
 		g.setColor(Color.BLACK);
-		g.drawLine(x1, y1, x2, y2);
+		g.drawLine(x1, y1, x2, y2); //主要的連接線
 		
+		// 畫箭頭
 		int dx = x2 - x1, dy = y2 - y1;
 		double D = Math.sqrt(dx*dx + dy*dy);
 		double xm = D - arrowW, xn = xm, ym = arrowH, yn = -arrowH, x;
@@ -31,17 +34,12 @@ public class AssociationLine extends Line {
         x = xn*cos - yn*sin + x1;
         yn = xn*sin + yn*cos + y1;
         xn = x;
-        int[] xpoints = {x2, (int) xm, (int) xn};
-        int[] ypoints = {y2, (int) ym, (int) yn};
         
         g.drawLine((int)xm, (int)ym, x2, y2);
         g.drawLine((int)xn, (int)yn, x2, y2);
-	}
-
-	@Override
-	public void paintPort(Graphics g) {
-		// TODO Auto-generated method stub
-		
+        if (selected) {
+			paintPort(g);
+		}
 	}
 	
 }

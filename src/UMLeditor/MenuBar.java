@@ -5,6 +5,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -17,6 +19,7 @@ import javax.swing.JTextField;
 
 public class MenuBar extends JMenuBar{
 	private Canvas canvas;
+	
 	public MenuBar() {
 		canvas = Canvas.getInstance();   // Canvas is singleton 
 		JMenu menu;
@@ -56,26 +59,31 @@ public class MenuBar extends JMenuBar{
 	}
 	
 	class GroupListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			group();
 		}
 	}
 	
 	class UngroupListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			ungroup();
 		}
 	}
 	
 	class ChangeNameListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			changeNameForm();
 		}
 	}
 	
 	class newFileListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO：想要新的畫布
+			canvas.reset();
 		}
 	}
 	
@@ -135,52 +143,37 @@ public class MenuBar extends JMenuBar{
 	public void group() {
 		if (canvas.shapes.size()==0)
 			return;
-		Group group = new Group();
-		Port g_P1 = null;
-		Port g_P2 = null;
+		List<Shape> shapes = new ArrayList<Shape>();
+		int x1 = Integer.MAX_VALUE;
+		int y1 = Integer.MAX_VALUE;
+		int x2 = Integer.MIN_VALUE;
+		int y2 = Integer.MIN_VALUE;
 		for(int i=0; i<canvas.shapes.size(); i++) {
 			Shape shape = canvas.shapes.get(i);
-			if (shape.selected==true) {
-//				if (shape.getClass()==Group.class) {
-//					return;
-//				}
-				if (g_P1==null || g_P2==null) {
-					g_P1 = new Port(shape.x1, shape.y1);
-					g_P2 = new Port(shape.x2, shape.y2);
+			if (shape.selected) {
+				shapes.add(shape);
+				if (shape.start.x<x1) {
+					x1 = shape.start.x;
 				}
-				else {
-					if (g_P1.x>shape.x1) {
-						g_P1.x = shape.x1;
-					}
-					if (g_P1.y>shape.y1) {
-						g_P1.y = shape.y1;
-					}
-					if (g_P2.x<shape.x2) {
-						g_P2.x = shape.x2;
-					}
-					if (g_P2.y<shape.y2) {
-						g_P2.y = shape.y2;
-					}
+				if (shape.start.y<y1) {
+					y1 = shape.start.y;
 				}
-				group.addShape(shape);
-				for(int j=0; j<shape.ports.length; j++) {
-					canvas.addPort(shape.ports[j]);
+				if (shape.start.x+shape.width>x2) {
+					x2 = shape.start.x+shape.width;
+				}
+				if (shape.start.y+shape.height>y2) {
+					y2 = shape.start.y+shape.height;
 				}
 			}
 		}
+		Group group = new Group(new Port(x1, y1), shapes, x2-x1, y2-y1);
 		// remove shape
 		for(int i=0; i<group.shapes.size(); i++) {
-			group.shapes.get(i).selected = false;
+			group.shapes.get(i).setUnselected();
 			canvas.shapes.remove(group.shapes.get(i));
 		}
-		group.selected = true;
-		group.x1 = g_P1.x;
-		group.y1 = g_P1.y;
-		group.x2 = g_P2.x;
-		group.y2 = g_P2.y;
-		group.width = group.x2-group.x1;
-		group.height = group.y2-group.y1;
-		group.createPorts();
+		group.setSelected();
+		canvas.tempObj = group;
 		canvas.addShape(group);
 		canvas.repaint();
 	}

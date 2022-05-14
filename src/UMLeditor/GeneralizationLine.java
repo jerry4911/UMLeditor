@@ -9,15 +9,17 @@ import java.awt.geom.AffineTransform;
 
 public class GeneralizationLine extends Line {
 	private int arrowW = 20, arrowH = 10;
-	public GeneralizationLine(int x1, int y1, int x2, int y2) {		
-		this.x1 = x1;
-		this.y1 = y1;
-		this.x2 = x2;
-		this.y2 = y2;
+	
+	public GeneralizationLine(Port start, Port end) {		
+		super(start, end);
 	}
 
 	@Override
 	public void paint(Graphics g) {
+		int x1 = ports[0].x;
+		int y1 = ports[0].y;
+		int x2 = ports[1].x;
+		int y2 = ports[1].y;
 		g.setColor(Color.BLACK);
 		g.drawLine(x1, y1, x2, y2);
 		
@@ -38,12 +40,9 @@ public class GeneralizationLine extends Line {
         g.fillPolygon(xpoints, ypoints, 3);
         g.setColor(Color.BLACK);
         g.drawPolygon(xpoints, ypoints, 3);
-	}
-
-	@Override
-	public void paintPort(Graphics g) {
-		// TODO Auto-generated method stub
-		
+        if (selected) {
+			paintPort(g);
+		}
 	}
 	
 }

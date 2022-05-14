@@ -1,6 +1,8 @@
 package UMLeditor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+
 import javax.swing.JFrame;
 
 public class UMLeditor extends JFrame{
@@ -20,9 +22,10 @@ public class UMLeditor extends JFrame{
 	
 	public static void main(String[] args) {
 		UMLeditor mainWindow = new UMLeditor();
-		mainWindow.setTitle("§Ö¼Öªº UML editor");
+		mainWindow.setTitle("UML editor");
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainWindow.setSize(800, 600);
+		mainWindow.setBackground(Color.cyan);
 		mainWindow.setLocationRelativeTo(null);
 		mainWindow.setVisible(true);
 	}

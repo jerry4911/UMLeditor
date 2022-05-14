@@ -4,30 +4,18 @@ import java.awt.Graphics;
 
 public abstract class BasicObject extends Shape {
 	private int offset = 6;
-	public final int portNum = 4; //四個連接點
 
-	protected BasicObject() {
-		initializePorts();
-	}
-	
-	private void initializePorts() {
-        ports = new Port[portNum];
-        for (int i = 0; i < ports.length; i++)
-        {
-            ports[i] = new Port();
-        }
-    }
-	
-	protected void createPorts() {
-		int[] xpoint = {(x1+x2)/2-offset/2, x2-offset/2, (x1+x2)/2-offset/2, x1-offset/2};
-		int[] ypoint = {y1-offset/2, (y1+y2)/2-offset/2, y2-offset/2, (y1+y2)/2-offset/2};
-		
+	protected BasicObject(Port start, int width, int height) {
+		super(start, width, height);
 		for(int i = 0; i < ports.length; i++) {
-			Port port = new Port(xpoint[i], ypoint[i]);
-			ports[i] = port;
+			ports[i].setPos(ports[i].x-offset/2, ports[i].y-offset/2);
 		}
+		ports[0].setPos(ports[0].x+width/2, ports[0].y);
+		ports[1].setPos(ports[1].x, ports[1].y+height/2);
+		ports[2].setPos(ports[2].x, ports[2].y-height/2);
+		ports[3].setPos(ports[3].x-width/2, ports[3].y);
 	}
 	
 	public abstract void paint(Graphics g);
-	public abstract void paintPort(Graphics g);
+	
 }

@@ -4,43 +4,49 @@ import java.awt.Graphics;
 import java.awt.Point;
 
 public abstract class Shape { //包含圖案以及線條
-	String name = "";
+	Port start = null;
+	final int portNum = 4; //兩個連接點
 	int depth = 0;
-	protected int x1, y1, x2, y2, height, width;
-	boolean selected = false;
 	protected Port[] ports;
+	protected int height, width;
+	boolean selected = false;
+	public String name = "";
 	
-	public abstract void paint(Graphics g);
-	public abstract void paintPort(Graphics g);
-	
-	protected Shape() {
-		name = "";
-		x1 = 0;
-		y1 = 0;
-		x2 = 0;
-		y2 = 0;
-		height = 0;
-		width = 0;
+	protected Shape(Port start, int width, int height) {
+		this.start = start;
+		ports = new Port[portNum];
+		ports[0] = new Port(this.start.x, start.y);
+		ports[1] = new Port(this.start.x+width, start.y);
+		ports[2] = new Port(this.start.x, start.y+height);
+		ports[3] = new Port(this.start.x+width, start.y+height);
+		this.height = height;
+		this.width = width;
 		depth = 0;
 	}
 	
-//	public void addPortOffset(int offset_x, int offset_y) {
-//		if (ports==null || ports.length==0) return;
-//		for(int i=0; i<ports.length; i++) {
-//			ports[i].x += offset_x;
-//			ports[i].y += offset_y;
-//		}
-//	}
-	
 	public void addXYOffset(int offset_x, int offset_y) {
-		x1 += offset_x;
-		x2 += offset_x;
-		y1 += offset_y;
-		y2 += offset_y;
 		for(int i=0; i<ports.length; i++) {
-			ports[i].x += offset_x;
-			ports[i].y += offset_y;
+			int x = ports[i].x;
+			int y = ports[i].y;
+			ports[i].setPos(x+offset_x, y+offset_y);
 		}
+		start.setPos(start.x+offset_x, start.y+offset_y);
 	}
+	
+	public void paintPort(Graphics g) {
+		for (int i = 0; i < ports.length; i++) {
+			ports[i].paint(g);
+        }
+	}
+	
+	public void setSelected() {
+		selected = true;
+	}
+	
+	public void setUnselected() {
+		selected = false;
+	}
+	
+	public abstract void paint(Graphics g);
 	
 }
