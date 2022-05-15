@@ -1224,9 +1224,7 @@
           <body>super(start, width,  height);&#xD;
 	</body>
         </ownedBehavior>
-        <ownedOperation xmi:id="_mArbYtLYEey4mMUpWiWP9w" name="paint" method="_mBXX7NLYEey4mMUpWiWP9w">
-          <ownedParameter xmi:id="_mArbY9LYEey4mMUpWiWP9w" name="g" type="_l_1t4dLYEey4mMUpWiWP9w"/>
-        </ownedOperation>
+        <ownedOperation xmi:id="_mArbYtLYEey4mMUpWiWP9w" name="paint" method="_mBXX7NLYEey4mMUpWiWP9w"/>
         <ownedOperation xmi:id="_iwTTE9PFEeyB7rJjkOtSRg" name="SelectArea" method="_iwUhMNPFEeyB7rJjkOtSRg">
           <eAnnotations xmi:id="_iwTTGNPFEeyB7rJjkOtSRg" source="http://www.eclipse.org/uml2/2.0.0/UML">
             <details xmi:id="_iwTTGdPFEeyB7rJjkOtSRg" key="create"/>

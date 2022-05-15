@@ -53,7 +53,15 @@ public class SelectMode extends Mode {
 			start_P.setPos(e.getPoint().x, e.getPoint().y);
 		}
 		else {
-			canvas.tempArea = new SelectArea(start_P, end_P.x-start_P.x, end_P.y-start_P.y);
+			int x = start_P.x;
+			int y = start_P.y;
+			if (x>end_P.x) {
+				x = end_P.x;
+			}
+			if (y>end_P.y) {
+				y = end_P.y;
+			}		
+			canvas.tempArea = new SelectArea(new Port(x, y), Math.abs(end_P.x-start_P.x), Math.abs(end_P.y-start_P.y));
 		}
 		canvas.repaint();
 	}
