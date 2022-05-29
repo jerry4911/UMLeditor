@@ -14,6 +14,7 @@ public class SelectMode extends Mode {
 	
 	public void mousePressed(MouseEvent e) {
 		selectedObj = canvas.findShape(e.getPoint().x, e.getPoint().y);
+		Line selectedLine = canvas.findLine(e.getPoint().x, e.getPoint().y);
 //		System.out.print("Choose¡G");
 //		System.out.println(selectedObj);
 		start_P = new Port(e.getPoint().x, e.getPoint().y);
@@ -24,11 +25,19 @@ public class SelectMode extends Mode {
 			canvas.tempArea = null;
 			selectedObj.setSelected();
 		}
+		else if (selectedLine!=null) {
+			canvas.tempLine = selectedLine;
+			selectedLine.setSelected();
+		}
 		else {
+			canvas.tempLine = null;
+			for (int i=0; i<canvas.lines.size(); i++) {
+				canvas.lines.get(i).setUnselected();
+			}	
 			canvas.tempObj = null;
 			for (int i=0; i<canvas.shapes.size(); i++) {
 				canvas.shapes.get(i).setUnselected();
-			}			
+			}		
 		}
 		canvas.repaint();
 	}

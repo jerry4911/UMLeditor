@@ -57,6 +57,7 @@ public class Group extends Shape {
 	
 	@Override
 	public void setUnselected() {
+		selected = false;
 		for(int i=0; i<shapes.size(); i++) {
 			shapes.get(i).setUnselected();
 		}

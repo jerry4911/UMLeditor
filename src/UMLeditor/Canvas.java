@@ -88,7 +88,11 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 			tempLine.paint(g); // Temp Line
 		
 		for (int i=0; i<lines.size(); i++) {
-			lines.get(i).paint(g);
+			Line line = lines.get(i);
+			line.paint(g);
+			if (line.selected) {
+				line.paintPort(g);
+			}
 		}
 		
 	}
@@ -131,6 +135,30 @@ public class Canvas extends JPanel { //畫布 -> 繪圖的區塊
 			}
 		}
 		return selectedShape;
+	}
+	
+	public Line findLine(int p_x, int p_y) {
+		Line selectedLine = null;
+		for (int i=0; i<lines.size(); i++) {
+			Line line = lines.get(i);
+			int x1 = line.ports[0].x;
+			int y1 = line.ports[0].y;
+			int x2 = line.ports[1].x;
+			int y2 = line.ports[1].y;
+			
+			if (x1==x2) {
+				if (p_x==x1 ) {
+					selectedLine = lines.get(i);
+				}
+			}
+			else{
+				if ((p_y-y1)==(y1-y2)*(p_x-x1)/(x1-x2)) {
+					if((p_x>=x1 && p_x<=x2) || (p_x>=x2 && p_x<=x1))
+						selectedLine = lines.get(i);
+				}
+			}
+		}
+		return selectedLine;
 	}
 
 

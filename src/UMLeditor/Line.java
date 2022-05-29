@@ -23,6 +23,14 @@ public abstract class Line {
 		return ports[1];
 	}
 	
+	public void setSelected() {
+		selected = true;
+	}
+	
+	public void setUnselected() {
+		selected = false;
+	}
+	
 	public void paintPort(Graphics g) {
 		for (int i = 0; i < ports.length; i++) {
 			ports[i].paint(g);

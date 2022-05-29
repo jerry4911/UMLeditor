@@ -56,12 +56,55 @@ public class MenuBar extends JMenuBar{
 		menu_item.addActionListener(new ChangeNameListener());
 		menu.add(menu_item);	
 		
+		menu_item = new JMenuItem("Delete");
+		menu_item.setFont(big);
+		menu_item.addActionListener(new DeleteListener());
+		menu.add(menu_item);	
+		
 	}
 	
 	class GroupListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			group();
+		}
+		
+		private void group() {
+			if (canvas.shapes.size()==0)
+				return;
+			List<Shape> shapes = new ArrayList<Shape>();
+			int x1 = Integer.MAX_VALUE;
+			int y1 = Integer.MAX_VALUE;
+			int x2 = Integer.MIN_VALUE;
+			int y2 = Integer.MIN_VALUE;
+			for(int i=0; i<canvas.shapes.size(); i++) {
+				Shape shape = canvas.shapes.get(i);
+				if (shape.selected) {
+					shapes.add(shape);
+					if (shape.start.x<x1) {
+						x1 = shape.start.x;
+					}
+					if (shape.start.y<y1) {
+						y1 = shape.start.y;
+					}
+					if (shape.start.x+shape.width>x2) {
+						x2 = shape.start.x+shape.width;
+					}
+					if (shape.start.y+shape.height>y2) {
+						y2 = shape.start.y+shape.height;
+					}
+				}
+			}
+			Group group = new Group(new Port(x1, y1), shapes, x2-x1, y2-y1);
+			// remove shape
+			for(int i=0; i<group.shapes.size(); i++) {
+				group.shapes.get(i).setUnselected();
+				canvas.shapes.remove(group.shapes.get(i));
+			}
+			group.setSelected();
+			canvas.tempObj = group;
+			canvas.addShape(group);
+			canvas.repaint();
 		}
 	}
 	
@@ -70,12 +113,64 @@ public class MenuBar extends JMenuBar{
 		public void actionPerformed(ActionEvent e) {
 			ungroup();
 		}
+		
+		private void ungroup() {
+			if (canvas.tempObj!=null && canvas.tempObj.getClass()==Group.class) {
+				Group group = (Group)canvas.tempObj;
+				canvas.shapes.remove(group);
+				for(int i=0; i<group.shapes.size(); i++) {
+					canvas.addShape(group.shapes.get(i));
+				}
+			}	
+			canvas.repaint();
+		}
 	}
 	
 	class ChangeNameListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			changeNameForm();
+		}
+		private void changeNameForm() {
+			JFrame inputTextFrame = new JFrame("Change Object Name");
+			inputTextFrame.setSize(400, 100);
+			inputTextFrame.getContentPane().setLayout(new GridLayout(0, 1));
+			
+			JPanel panel = null;
+			panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+			
+			JTextField Text =  new JTextField("Object Name");
+			panel.add(Text);
+			inputTextFrame.getContentPane().add(panel);
+			
+			panel = new JPanel();
+			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+			
+			JButton confirm = new JButton("OK");
+			panel.add(confirm);
+			
+			JButton cancel = new JButton("Cancel");
+			panel.add(cancel);
+
+			inputTextFrame.getContentPane().add(panel);
+			inputTextFrame.setLocationRelativeTo(null);
+			inputTextFrame.setVisible(true);
+			
+			confirm.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					canvas.changeObjName(Text.getText());
+					inputTextFrame.dispose();
+					canvas.repaint();
+				}
+			});
+			
+			cancel.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					inputTextFrame.dispose();
+				}
+			});
+			
 		}
 	}
 	
@@ -87,94 +182,23 @@ public class MenuBar extends JMenuBar{
 		}
 	}
 	
-	public void changeNameForm() {
-		JFrame inputTextFrame = new JFrame("Change Object Name");
-		inputTextFrame.setSize(400, 100);
-		inputTextFrame.getContentPane().setLayout(new GridLayout(0, 1));
-		
-		JPanel panel = null;
-		panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		
-		JTextField Text =  new JTextField("Object Name");
-		panel.add(Text);
-		inputTextFrame.getContentPane().add(panel);
-		
-		panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-		
-		JButton confirm = new JButton("OK");
-		panel.add(confirm);
-		
-		JButton cancel = new JButton("Cancel");
-		panel.add(cancel);
-
-		inputTextFrame.getContentPane().add(panel);
-		inputTextFrame.setLocationRelativeTo(null);
-		inputTextFrame.setVisible(true);
-		
-		confirm.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				canvas.changeObjName(Text.getText());
-				inputTextFrame.dispose();
-				canvas.repaint();
-			}
-		});
-		
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				inputTextFrame.dispose();
-			}
-		});
-		
-	}
-
-	public void ungroup() {
-		if (canvas.tempObj!=null && canvas.tempObj.getClass()==Group.class) {
-			Group group = (Group)canvas.tempObj;
-			canvas.shapes.remove(group);
-			for(int i=0; i<group.shapes.size(); i++) {
-				canvas.addShape(group.shapes.get(i));
-			}
-		}	
-		canvas.repaint();
-	}
-
-	public void group() {
-		if (canvas.shapes.size()==0)
-			return;
-		List<Shape> shapes = new ArrayList<Shape>();
-		int x1 = Integer.MAX_VALUE;
-		int y1 = Integer.MAX_VALUE;
-		int x2 = Integer.MIN_VALUE;
-		int y2 = Integer.MIN_VALUE;
-		for(int i=0; i<canvas.shapes.size(); i++) {
-			Shape shape = canvas.shapes.get(i);
-			if (shape.selected) {
-				shapes.add(shape);
-				if (shape.start.x<x1) {
-					x1 = shape.start.x;
-				}
-				if (shape.start.y<y1) {
-					y1 = shape.start.y;
-				}
-				if (shape.start.x+shape.width>x2) {
-					x2 = shape.start.x+shape.width;
-				}
-				if (shape.start.y+shape.height>y2) {
-					y2 = shape.start.y+shape.height;
-				}
-			}
+	class DeleteListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			delete();
 		}
-		Group group = new Group(new Port(x1, y1), shapes, x2-x1, y2-y1);
-		// remove shape
-		for(int i=0; i<group.shapes.size(); i++) {
-			group.shapes.get(i).setUnselected();
-			canvas.shapes.remove(group.shapes.get(i));
+
+		private void delete() {
+			if (canvas.tempObj!= null) {
+				canvas.shapes.remove(canvas.tempObj);
+			}
+			if (canvas.tempLine!= null) {
+				canvas.lines.remove(canvas.tempLine);
+				canvas.tempLine = null;
+			}
+			canvas.repaint();
 		}
-		group.setSelected();
-		canvas.tempObj = group;
-		canvas.addShape(group);
-		canvas.repaint();
 	}
+
+	
 }
