@@ -191,6 +191,13 @@ public class MenuBar extends JMenuBar{
 		private void delete() {
 			if (canvas.tempObj!= null) {
 				canvas.shapes.remove(canvas.tempObj);
+				for (int i=0; i<canvas.lines.size(); i++) {
+					Line line = canvas.lines.get(i);
+					if (line.startObj==canvas.tempObj || line.endObj==canvas.tempObj) {
+						canvas.lines.remove(line);
+						canvas.tempLine = null;
+					}
+				}
 			}
 			if (canvas.tempLine!= null) {
 				canvas.lines.remove(canvas.tempLine);
